@@ -55,7 +55,6 @@ Empirica.onStageEnded(({ stage }) => {
   const stageName = stage.get("name");
   const roundName = stage.round.get("name");
   console.log(`Stage ended: ${stageName} in round ${roundName}`);
-
   switch (stageName) {  
     case "contribution":
       console.log("Processing contributions...");
@@ -63,49 +62,39 @@ Empirica.onStageEnded(({ stage }) => {
       players.forEach(p => {
         const contribution = p.round.get("contribution");
         console.log(`Player ${p.id} contributed: ${contribution}`);
-
         // Immediately deduct contribution from coins
         const newCoins = p.get("coins") - contribution;
         p.set("coins", newCoins);
         p.round.set("kept", newCoins);
-
         console.log(`Player ${p.id} kept: ${newCoins}, new balance: ${p.get("coins")}`);
       });
-
       // Calculate total contribution and store at round level for later use
       const roundContribution = players.reduce((sum, p) => sum + p.round.get("contribution"), 0);
       stage.round.set("totalContribution", roundContribution);
       console.log(`Total round contribution: ${roundContribution}`);
       break;
-
     case "monitor":
       console.log("Distributing public good returns after monitoring...");
       const monitorPlayers = stage.currentGame.players;
       const contributionMultiplier = 2;
-
       // Get the total contribution from the round data
       const totalContribution = stage.round.get("totalContribution");
       const roundPool = totalContribution * contributionMultiplier;
       const share = roundPool / monitorPlayers.length;
-
       console.log(`Multiplied pool (x${contributionMultiplier}): ${roundPool}`);
       console.log(`Each player receives: ${share}`);
-
       monitorPlayers.forEach(p => {
         // Deduct one coin for each player they monitor
         const monitoredPlayers = p.round.get("monitoredPlayers") || [];
         const monitoringCost = monitoredPlayers.length;
         const newTotal = p.get("coins") + share - monitoringCost;
-
         console.log(
           `Player ${p.id} receives share: ${share}, ` +
           `monitoring cost: ${monitoringCost}, ` +
           `new balance: ${newTotal}`
         );
-
         p.round.set("share", share);
         p.set("coins", newTotal);
-
         // Store monitoring results for the players they monitored
         const monitoringResults = monitoredPlayers.map(monitoredId => {
           const monitoredPlayer = monitorPlayers.find(mp => mp.id === monitoredId);
@@ -118,13 +107,28 @@ Empirica.onStageEnded(({ stage }) => {
         p.round.set("monitoringResults", monitoringResults);
       });
       break;
-
     case "result":
       console.log("Players have viewed results...");
       break;
+    case "punish":
+      console.log("Applying punishments...");
+      const punishPlayers = stage.currentGame.players;
+      punishPlayers.forEach(p => {
+        const punishments = p.round.get("punishments") || [];
+        const coinsLost = punishments.length * 5;
+        const newCoins = p.get("coins") - coinsLost;
+        p.set("coins", newCoins);
+        console.log(`Player ${p.id} lost ${coinsLost} coins due to punishments, new balance: ${newCoins}`);
+        // Also deduct 1 coin for each player they punished
+        const punishedPlayers = p.round.get("punishedPlayers") || [];
+        const punishmentCost = punishedPlayers.length;
+        const finalCoins = newCoins - punishmentCost;
+        p.set("coins", finalCoins);
+        console.log(`Player ${p.id} spent ${punishmentCost} coins to punish others, final balance: ${finalCoins}`);
+      });
+      break;
   }
 });
-
 // Round End
 Empirica.onRoundEnded(({ round }) => {
   console.log(`Round ended: ${round.get("name")}`);

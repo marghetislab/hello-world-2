@@ -1,3 +1,4 @@
+// client/src/stages/Punish.jsx
 import React from "react";
 import { usePlayer } from "@empirica/core/player/classic/react";
 import { Scoreboard } from "../components/Scoreboard";

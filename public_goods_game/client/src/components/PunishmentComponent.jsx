@@ -1,3 +1,4 @@
+// client/src/components/PunishmentComponent.jsx
 import React, { useState, useEffect } from "react";
 import { usePlayers, usePlayer } from "@empirica/core/player/classic/react";
 
