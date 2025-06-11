@@ -1,0 +1,61 @@
+factors:
+  - desc: playerCount determines the number of Players are in a Game.
+    name: playerCount
+    values:
+      - value: 2
+      - value: 3
+      - value: 4
+      - value: 5
+  - desc: How many times participants will make a choice
+    name: numRounds
+    values:
+      - value: 7
+      - value: 5
+  - desc: Can players chat with each other during the game?
+    name: chatEnabled
+    values:
+      - value: true
+      - value: false
+
+treatments:
+  - name: 3_players_chat
+    desc: 3 players with chat enabled
+    factors:
+      playerCount: 3
+      numRounds: 5
+      chatEnabled: true
+
+  - name: 3_players_nochat
+    desc: 3 players with chat disabled
+    factors:
+      playerCount: 3
+      numRounds: 5
+      chatEnabled: false
+
+  - name: 4_players_chat
+    desc: 4 players with chat enabled
+    factors:
+      playerCount: 4
+      numRounds: 5
+      chatEnabled: true
+
+  - name: 4_players_nochat
+    desc: 4 players with chat disabled
+    factors:
+      playerCount: 4
+      numRounds: 5
+      chatEnabled: false
+
+  - name: 5_players_chat
+    desc: 5 players with chat enabled
+    factors:
+      playerCount: 5
+      numRounds: 5
+      chatEnabled: true
+
+  - name: 5_players_nochat
+    desc: 5 players with chat disabled
+    factors:
+      playerCount: 5
+      numRounds: 5
+      chatEnabled: false
